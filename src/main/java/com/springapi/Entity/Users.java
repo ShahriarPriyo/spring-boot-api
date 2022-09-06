@@ -1,7 +1,9 @@
 package com.springapi.Entity;
 
 import javax.persistence.*;
+import javax.validation.constraints.Pattern;
 import java.util.Date;
+
 @Entity
 public class Users {
     @Id
@@ -10,9 +12,10 @@ public class Users {
 
     @Column(nullable = false)
     private String name;
+    @Pattern(regexp = "^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$")
     @Column(nullable = false,unique = true)
     private String email;
-
+    @Pattern(regexp = "^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]{8,}$",message="Atleast one number,one letter and minimum 8 characters")
     @Column(nullable = false)
     private String password;
     @Column(nullable = false)
