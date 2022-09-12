@@ -2,13 +2,12 @@ package com.springapi.Services;
 
 import com.springapi.Entity.Users;
 import com.springapi.Repository.UserRepository;
+import com.springapi.Utils.EntityNotFoundException;
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.beans.factory.annotation.Autowired;
-/*import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;*/
 import org.springframework.stereotype.Service;
 
+import javax.swing.text.html.Option;
 import java.util.Optional;
 
 @Service
@@ -22,36 +21,37 @@ public class UserServices{
     }
 
     public Optional<Users> getUser(int id) {
-        return userRepository.findById(id);
+
+        Optional<Users> user = userRepository.findById(id);
+        if(user.isEmpty()){
+            throw new EntityNotFoundException(Users.class,"id",String.valueOf(id));
+        }
+        return Optional.of(user.get());
     }
     public Optional<Users> updateUser(int id, Users user){
         Optional<Users> updatedUser =  userRepository.findById(id);
-        if (updatedUser.isEmpty()){
-            return Optional.empty();
+        if(updatedUser.isEmpty()){
+            throw new EntityNotFoundException(Users.class,"id",String.valueOf(id));
         }
-        if (!Strings.isBlank(user.getName())) {
-            updatedUser.get().setName(user.getName());
-        }
-        if (!Strings.isBlank(user.getEmail())) {
-            updatedUser.get().setEmail(user.getEmail());
-        }
-        if (!Strings.isBlank(user.getPassword())) {
-            updatedUser.get().setPassword(user.getPassword());
-        }
-        if (!Strings.isBlank(user.getPhoneNumber())) {
-            updatedUser.get().setPhoneNumber(user.getPhoneNumber());
-        }
+        setUserProperties(updatedUser.get(),user);
         userRepository.save(updatedUser.get());
         return updatedUser;
+    }
+
+    protected void setUserProperties(Users currentUser, Users previousUser){
+        currentUser.setName(previousUser.getName());
+        currentUser.setEmail(previousUser.getEmail());
+        currentUser.setPassword(previousUser.getPassword());
+        currentUser.setPhoneNumber(previousUser.getPhoneNumber());
     }
 
     public Optional<Users> deleteUser(int id){
         Optional<Users> user = userRepository.findById(id);
         if (user.isPresent()){
             userRepository.deleteById(id);
-            return user;
+
         }
-        return Optional.empty();
+        throw new EntityNotFoundException(Users.class,"id",String.valueOf(id));
     }
 
 }
