@@ -4,12 +4,15 @@ import com.springapi.Entity.Users;
 import com.springapi.Repository.UserRepository;
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.beans.factory.annotation.Autowired;
+/*import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;*/
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
 @Service
-public class UserServices {
+public class UserServices{
     @Autowired
     private UserRepository userRepository;
 
@@ -50,4 +53,5 @@ public class UserServices {
         }
         return Optional.empty();
     }
+
 }

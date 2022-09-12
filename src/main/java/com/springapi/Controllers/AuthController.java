@@ -1,7 +1,7 @@
 package com.springapi.Controllers;
 
 import com.springapi.Entity.Users;
-import com.springapi.Repository.UserRepository;
+import com.springapi.JWTConfiguration.AuthProvider;
 import com.springapi.Services.AuthServices;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -16,6 +16,9 @@ import java.util.Optional;
 public class AuthController {
     @Autowired
     private AuthServices authServices;
+
+    @Autowired
+    private AuthProvider authProvider;
 
     @PostMapping(value = "/signup")
     public ResponseEntity<Users> signUp(@RequestBody Users user){
@@ -32,13 +35,15 @@ public class AuthController {
     }
 
     @PostMapping(value = "/login")
-    public ResponseEntity<Optional<Users>> logIn(@RequestBody Users user){
+    public ResponseEntity<? extends Object> logIn(@RequestBody Users user){
 
+        System.out.println(user.getEmail());
         try{
             Optional <Users> existedUser = authServices.logIn(user);
-            return ResponseEntity.status(HttpStatus.OK).body(existedUser);
+            System.out.println("Bro "+existedUser.get().getEmail()+" "+existedUser.get().getPassword());
+            return ResponseEntity.status(HttpStatus.OK).body(authProvider.provideToken(existedUser.get().getEmail()));
         }catch (Exception e){
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
     }
 }
