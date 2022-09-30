@@ -1,24 +1,26 @@
 package com.springapi.Controllers;
 
 import com.springapi.Entity.Users;
-import com.springapi.JWTConfiguration.AuthProvider;
+import com.springapi.JWTConfiguration.TokenProvider;
 import com.springapi.Services.AuthServices;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Optional;
 
 @RestController
+@RequestMapping(path = "${apiPrefix}")
 public class AuthController {
     @Autowired
     private AuthServices authServices;
 
     @Autowired
-    private AuthProvider authProvider;
+    private TokenProvider tokenProvider;
 
     @PostMapping(value = "/signup")
     public ResponseEntity<Users> signUp(@RequestBody Users user){
@@ -41,7 +43,7 @@ public class AuthController {
         try{
             Optional <Users> existedUser = authServices.logIn(user);
             System.out.println("Bro "+existedUser.get().getEmail()+" "+existedUser.get().getPassword());
-            return ResponseEntity.status(HttpStatus.OK).body(authProvider.provideToken(existedUser.get().getEmail()));
+            return ResponseEntity.status(HttpStatus.OK).body(tokenProvider.provideToken(existedUser.get().getEmail()));
         }catch (Exception e){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }

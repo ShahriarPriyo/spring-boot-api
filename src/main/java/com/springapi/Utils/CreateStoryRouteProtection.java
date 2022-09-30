@@ -17,8 +17,10 @@ public class CreateStoryRouteProtection {
 
     public Users checkUserValidation(){
         String userEmail=authProvider.currentUser();
+        System.out.println(userEmail);
         Optional<Users> users = userRepository.findByEmail(userEmail);
 
+        System.out.println(users.get());
         if(users.isEmpty())
             throw new EntityNotFoundException(Story.class,"Email",userEmail);
         return users.get();

@@ -4,6 +4,7 @@ import com.springapi.Entity.Users;
 import com.springapi.JWTUtils.JWTUtility;
 import com.springapi.Services.UserServices;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -21,12 +22,13 @@ public class SecurityConfiguration  {
 
     @Autowired
     private JWTUtility jwtUtility;
-
+    @Value("${apiPrefix}")
+    private String prefixApi;
     @Bean
     protected SecurityFilterChain configure(HttpSecurity http) throws Exception {
         http.csrf()
                 .disable()
-                .authorizeRequests().antMatchers( "/signup","/login").permitAll()
+                .authorizeRequests().antMatchers( prefixApi+"/signup",prefixApi+"/login",prefixApi+"/stories",prefixApi+"/stories/{id}", prefixApi+"/users", prefixApi+"/users/{id}").permitAll()
                 .anyRequest().authenticated();
         return http.build();
     }
